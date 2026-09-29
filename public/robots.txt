@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /*.mp4$
+
+# Une fois votre adresse Vercel connue, ajoutez la ligne suivante
+# (et remettez un sitemap.xml) :
+# Sitemap: https://VOTRE-ADRESSE/sitemap.xml

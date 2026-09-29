@@ -1,0 +1,19 @@
+{
+  "name": "VYZIO — Sites web et vidéos IA à Paris",
+  "short_name": "VYZIO",
+  "description": "Studio VYZIO : sites web et vidéos publicitaires IA. Dès 11 €. Vous voyez votre site avant de payer.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#05060a",
+  "theme_color": "#05060a",
+  "icons": [
+    {
+      "src": "/og-vyzio.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

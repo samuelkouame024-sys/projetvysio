@@ -1,0 +1,49 @@
+name: CI — build + sécurité
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Bloquer les secrets commités
+        run: |
+          # 1. Fichiers interdits (.env.example est autorisé : il ne contient aucune vraie clé)
+          if git ls-files | grep -vE '(^|/)\.env\.example$' | grep -E '(^|/)\.env(\.|$)|supabase/config\.toml'; then
+            echo "::error::Fichier .env ou config Supabase détecté dans Git. Retirez-le."
+            exit 1
+          fi
+          # 2. Clés secrètes Supabase collées dans le code
+          if git grep -nE 'sb_secret_[A-Za-z0-9_-]{10,}|SERVICE_ROLE_KEY\s*=\s*ey[A-Za-z0-9_-]{20,}' -- . ':!*.md'; then
+            echo "::error::Clé secrète Supabase détectée dans le code. Supprimez-la et faites une rotation."
+            exit 1
+          fi
+          echo "Aucun secret commité. OK."
+
+      - name: Install
+        run: npm ci
+
+      - name: Audit sécurité (fail si vulnérabilité haute/critique)
+        run: npm audit --audit-level=high
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+
+      - name: Vérifier les headers Vercel
+        run: |
+          node -e "const v=require('./vercel.json'); const h=v.headers[0].headers.map(x=>x.key); for (const k of ['Content-Security-Policy','Strict-Transport-Security','X-Frame-Options','Referrer-Policy']) { if(!h.includes(k)) throw new Error('Header manquant: '+k) } console.log('Headers OK:', h.join(', '))"

@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@theme {
+  --color-encre: #05060a;
+  --color-paper: #f4f6fb;
+  --color-vyzio: #3b6bff;
+  --color-vyzio-deep: #2347c5;
+  --color-cyan-neon: #00d4ff;
+  --color-violet-neon: #b53cff;
+  --color-wa: #25d366;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, sans-serif;
+  --font-hand: "Caveat", cursive;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --ease-cinema: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+}
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-encre);
+  color: var(--color-paper);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--color-vyzio); color: white; }
+
+/* Focus clavier visible partout */
+:focus-visible {
+  outline: 3px solid var(--color-cyan-neon);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Curseur custom : on masque le natif uniquement sur pointeur fin */
+@media (pointer: fine) {
+  body.has-custom-cursor, body.has-custom-cursor a, body.has-custom-cursor button {
+    cursor: none;
+  }
+}
+
+/* --- Grain léger "fait main" --- */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 90;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 9s steps(6) infinite;
+}
+@keyframes grain-shift {
+  0%,100% { transform: translate(0,0); }
+  20% { transform: translate(-3%,2%); }
+  40% { transform: translate(2%,-3%); }
+  60% { transform: translate(-2%,-2%); }
+  80% { transform: translate(3%,3%); }
+}
+
+/* Titres display serrés */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  font-variation-settings: "opsz" 96;
+}
+
+/* Sous-titres de film */
+.subtitle-cinema {
+  display: inline;
+  background: rgba(5,6,10,0.82);
+  color: #fff;
+  padding: 0.08em 0.35em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  line-height: 1.35;
+}
+
+/* Marquee générique */
+@keyframes credits-roll {
+  0% { transform: translateY(38vh); }
+  100% { transform: translateY(-105%); }
+}
+.credits-track {
+  animation: credits-roll 26s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .credits-track { animation-duration: 80s; }
+  .grain::after { animation: none; }
+}
+
+/* Bandeau défilant */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-x 22s linear infinite;
+  will-change: transform;
+}
+
+/* Pointillés ticket de caisse */
+.dot-leader {
+  flex: 1 1 auto;
+  min-width: 1.5rem;
+  border-bottom: 2px dotted currentColor;
+  opacity: 0.35;
+  transform: translateY(-6px);
+}
+
+/* Bord zigzag ticket */
+.zigzag-bottom {
+  --zz: 12px;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--zz)), 97.5% 100%, 95% calc(100% - var(--zz)), 92.5% 100%, 90% calc(100% - var(--zz)), 87.5% 100%, 85% calc(100% - var(--zz)), 82.5% 100%, 80% calc(100% - var(--zz)), 77.5% 100%, 75% calc(100% - var(--zz)), 72.5% 100%, 70% calc(100% - var(--zz)), 67.5% 100%, 65% calc(100% - var(--zz)), 62.5% 100%, 60% calc(100% - var(--zz)), 57.5% 100%, 55% calc(100% - var(--zz)), 52.5% 100%, 50% calc(100% - var(--zz)), 47.5% 100%, 45% calc(100% - var(--zz)), 42.5% 100%, 40% calc(100% - var(--zz)), 37.5% 100%, 35% calc(100% - var(--zz)), 32.5% 100%, 30% calc(100% - var(--zz)), 27.5% 100%, 25% calc(100% - var(--zz)), 22.5% 100%, 20% calc(100% - var(--zz)), 17.5% 100%, 15% calc(100% - var(--zz)), 12.5% 100%, 10% calc(100% - var(--zz)), 7.5% 100%, 5% calc(100% - var(--zz)), 2.5% 100%, 0 calc(100% - var(--zz)));
+}
+
+/* Scroll snap mobile pour les vidéos */
+.snap-row {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.snap-row::-webkit-scrollbar { display: none; }
+.snap-row > * { scroll-snap-align: center; }
+
+/* Chapters bar scroll */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Révélations */
+.reveal-mask { overflow: hidden; display: block; }
+.reveal-line { display: block; will-change: transform; }
+
+/* Vidéos : GPU + rendu fluide (anti-saccade) */
+video {
+  background: #0b0d14;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+video::-webkit-media-controls { display: none !important; }
+
+/* Rendu différé des sections hors écran : le scroll ne saccade pas */
+main > section:not(:first-child) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+/* Téléphone */
+.phone-notch::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96px;
+  height: 22px;
+  background: #05060a;
+  border-radius: 999px;
+  z-index: 20;
+}
+
+/* Autocollant */
+.sticker {
+  box-shadow: 3px 4px 0 rgba(5,6,10,0.9);
+}
+
+/* Accordéon fluide */
+.faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.faq-panel.open { grid-template-rows: 1fr; }
+.faq-inner { overflow: hidden; }
+
+/* Soulignement manuscrit */
+.hand-underline {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M2 10 Q 60 2 120 8 T 198 6' fill='none' stroke='%233b6bff' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.32em;
+  padding-bottom: 0.12em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+  }
+}
